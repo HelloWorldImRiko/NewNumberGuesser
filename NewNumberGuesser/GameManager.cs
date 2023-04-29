@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NewNumberGuesser
 {
-    internal class GameManager
+    public class GameManager
     {
         private Random _random;
 

@@ -1,7 +1,13 @@
-﻿namespace NewNumberGuesser
+﻿using NewNumberGuesser.Extensions;
+using NewNumberGuesser.GameModes;
+
+namespace NewNumberGuesser
 {
     internal class Program
     {
+        private const int PLAYER_GUESSER = 1;
+        private const int COMPUTER_GUESSER = 2;
+
         static void Main(string[] args)
         {
             var minNumber = 1;
@@ -10,100 +16,46 @@
 
             var manager = new GameManager(minNumber, maxNumber, allowedGuesses);
 
-            WriteLine("Welcome to Number Guesser!");
-            WriteLine($"Try to guess my number between {manager.MinNumber} and {manager.MaxNumber}.");
+            ConsoleExt.WriteSpacedLine("Welcome to Number Guesser!");
 
-            RunGame(manager);
+            var gameMode = SelectGameMode();
 
-            if (manager.TotalWins == 1)
-                Console.WriteLine($"You won {manager.TotalWins} game against me!");
-            else
-                Console.WriteLine($"You won {manager.TotalWins} games against me!");
+            if(gameMode == PLAYER_GUESSER)
+            {
+                var playerGuesser = new PlayerGuesser();
+                playerGuesser.RunGame(manager);
+            }
+            else if (gameMode == COMPUTER_GUESSER)
+            {
+                var computerGuesser = new ComputerGuesser();
+                computerGuesser.RunGame(manager);
+            }
 
-            WriteLine("Press any key to exit.");
+            ConsoleExt.WriteSpacedLine("Press any key to exit.");
             Console.ReadKey();
         }
 
-        private static void RunGame(GameManager manager)
+        private static int SelectGameMode()
         {
-            var gameResult = PlayRound(manager);
+            ConsoleExt.WriteSpacedLine($"Select your style of game.{Environment.NewLine}{GetOptions()}");
+            var successful = int.TryParse(Console.ReadLine(), out var selectedOption);
 
-            if(!gameResult.DidWinGame)
+            if (successful && (selectedOption == PLAYER_GUESSER || selectedOption == COMPUTER_GUESSER))
+                return selectedOption;
+
+            while (!successful || selectedOption < PLAYER_GUESSER || selectedOption > COMPUTER_GUESSER)
             {
-                Console.WriteLine("Better luck next time!");
-                return;
+                ConsoleExt.WriteSpacedLine("I'm sorry. Please try making your selection again.");
+                ConsoleExt.WriteSpacedLine(GetOptions());
+                successful = int.TryParse(Console.ReadLine(), out selectedOption);
             }
 
-            manager.UpdateWin(gameResult.NumberOfGuesses);
-            var stillWinning = true;
-
-            while(stillWinning)
-            {
-                Console.WriteLine("Try to beat me again with the same number of guesses or less!");
-                var result = PlayRound(manager);
-                stillWinning = result.DidWinGame;
-
-                if(result.DidWinGame)
-                    manager.UpdateWin(result.NumberOfGuesses);
-            }
+            return selectedOption;
         }
 
-        private static GameResult PlayRound(GameManager manager)
+        private static string GetOptions()
         {
-            var selectedNumber = manager.GetNextRandomNumber();
-
-            var hasWon = false;
-            var guessesLeft = manager.AllowedGuesses;
-
-            while(guessesLeft > 0 && hasWon == false) 
-            {
-                Console.WriteLine($"Guesses Remaining: {guessesLeft}");
-                var guess = Console.ReadLine();
-
-                if(int.TryParse(guess, out var parsedAnswer))
-                {
-                    if(parsedAnswer < manager.MinNumber || parsedAnswer > manager.MaxNumber)
-                    {
-                        WriteLine($"The number you guessed was outside my range of {manager.MinNumber} and {manager.MaxNumber}. Please try again.");
-                        continue;
-                    }
-
-                    if (parsedAnswer > selectedNumber)
-                        WriteLine($"You guessed {parsedAnswer}. That is too high.");
-                    else if (parsedAnswer < selectedNumber)
-                        WriteLine($"You guessed {parsedAnswer}. That is too low.");
-                    else
-                        hasWon = true;
-
-                    guessesLeft--;
-                }
-                else
-                {
-                    WriteLine("Entry invalid. Please enter in a valid non-decimal number.");
-                }
-            }
-
-            GameResult gameResult;
-
-            if(hasWon)
-            {
-                var guessesToWin = manager.AllowedGuesses - guessesLeft;
-                gameResult = new GameResult(hasWon, guessesToWin);
-                WriteLine($"Congratulations! You've won in {guessesToWin} tries! My number was {selectedNumber}.");
-            }
-            else
-            {
-                gameResult = new GameResult(hasWon, 0);
-                WriteLine($"Sorry! You did not guess my number. It was {selectedNumber}");
-            }
-
-            return gameResult;
-        }
-
-        private static void WriteLine(string text)
-        {
-            Console.WriteLine("");
-            Console.WriteLine(text);
+            return $"{PLAYER_GUESSER} - Guess the computer's number{Environment.NewLine}{COMPUTER_GUESSER} - The computer guesses your number";
         }
     }
 }
