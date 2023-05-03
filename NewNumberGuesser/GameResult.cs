@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NewNumberGuesser
+﻿namespace NewNumberGuesser
 {
     /// <summary>
     /// An object representing the end result of a number guessing game
     /// </summary>
-    internal class GameResult
+    public class GameResult
     {
         /// <summary>
         /// Whether or not the player won the game

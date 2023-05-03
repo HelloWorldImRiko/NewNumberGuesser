@@ -1,14 +1,18 @@
 ﻿using NewNumberGuesser.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NewNumberGuesser.GameModes
 {
+    /// <summary>
+    /// A class holding functionality
+    /// for the computer to pick a random number and make the player guess said number
+    /// </summary>
     public class PlayerGuesser
     {
+        /// <summary>
+        /// For the given <see cref="GameManager"/> instance,
+        /// plays multiple rounds of the game where the player tries to guess the computer's number
+        /// </summary>
+        /// <param name="manager"></param>
         public void RunGame(GameManager manager)
         {
             ConsoleExt.WriteSpacedLine($"Try to guess my number between {manager.MinNumber} and {manager.MaxNumber}.");

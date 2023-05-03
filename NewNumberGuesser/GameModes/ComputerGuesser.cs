@@ -1,18 +1,22 @@
 ﻿using NewNumberGuesser.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NewNumberGuesser.GameModes
 {
+    /// <summary>
+    /// A class holding functionality 
+    /// for the computer to try and guess the player's number 
+    /// </summary>
     public class ComputerGuesser
     {
         private const int TOO_HIGH_OPT = 1;
         private const int TOO_LOW_OPT = 2;
         private const int CORRECT_GUESS_OPT = 3;
 
+        /// <summary>
+        /// For the given <see cref="GameManager"/> instance, 
+        /// plays a round where the computer tries to guess the player's number
+        /// </summary>
+        /// <param name="manager"></param>
         public void RunGame(GameManager manager) 
         {
             var rand = new Random();
